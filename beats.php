@@ -69,10 +69,12 @@
 						or die('Could not connect: ' . pg_last_error());
 		
 		if (empty($_GET["source"])){
-			$result = pg_query_params($dbconn, 'select *, extract(epoch from (current_timestamp - created_date)) as since from beats WHERE extract(epoch from (current_timestamp - created_date)) < $1 order by created_date desc', array($since));
+			$result = pg_query_params($dbconn, 'select *, extract(epoch from (current_timestamp - created_date)) as since 
+				from beats WHERE extract(epoch from (current_timestamp - created_date)) < $1 order by created_date desc', array($since));
 		}
 		else{
-			$result = pg_query_params($dbconn, 'select *, extract(epoch from (current_timestamp - created_date)) as since from beats WHERE extract(epoch from (current_timestamp - created_date)) < $1 and source = $2 order by created_date desc', array($since, $source));
+			$result = pg_query_params($dbconn, 'select *, extract(epoch from (current_timestamp - created_date)) as since 
+				from beats WHERE extract(epoch from (current_timestamp - created_date)) < $1 and source = $2 order by created_date desc', array($since, $source));
 		}
 
 		if (!$result) {
@@ -83,9 +85,9 @@
 		else{
 
 			$arr = pg_fetch_all($result);
-			// if ($arr = false || empty($arr)) {
-			// 	$arr = 'No results found';
-			// }
+			if ($arr == false || empty($arr)) {
+				$arr = 'No results found';
+			}
 			
 			if (empty($ctxt)){
 				echo json_encode($arr);
